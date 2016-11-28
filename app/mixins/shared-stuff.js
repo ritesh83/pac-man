@@ -10,7 +10,7 @@ export default Ember.Mixin.create({
         return ctx;
     }),
 
-    drawCircle(x, y, radiusDivisor, direction) {
+    drawCircle(x, y, radiusDivisor, direction, color = '#000') {
         let ctx = this.get('ctx');
 
         let squareSize = this.get('level.squareSize');
@@ -18,7 +18,7 @@ export default Ember.Mixin.create({
         let pixelX = (x + 1/2 + this.offsetFor('x', direction)) * squareSize;
         let pixelY = (y + 1/2 + this.offsetFor('y', direction)) * squareSize;
 
-        ctx.fillStyle = '#000';
+        ctx.fillStyle = color;
         ctx.beginPath();
         ctx.arc(pixelX, pixelY, squareSize/radiusDivisor, 0, Math.PI * 2, false);
         ctx.closePath();

@@ -37,7 +37,7 @@ export default Ember.Object.extend({
         let grid = this.get('grid');
         grid.forEach((row)=>{
             row.forEach((cell) => {
-                if(cell == 2) {
+                if(cell === 2) {
                     hasPelletsLeft = true;
                 }
             });
@@ -49,7 +49,7 @@ export default Ember.Object.extend({
         let grid = this.get('grid');
         grid.forEach((row, rowIndex) => {
             row.forEach((cell, columnIndex) => {
-                if(cell == 0) {
+                if(cell === 0) {
                     grid[rowIndex][columnIndex] = 2;
                 }
             });
@@ -57,7 +57,18 @@ export default Ember.Object.extend({
     },
 
     startingPac: {
-        x: 2,
-        y:1
-    }
+        x: 0,
+        y: 3
+    },
+
+    startingGhosts: [
+        {
+            x: 0,
+            y: 0
+        },
+        {
+            x: 5,
+            y: 0
+        }
+    ]
 });
