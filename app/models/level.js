@@ -5,7 +5,7 @@ export default Ember.Object.extend({
     // 1 is a wall
     // 2 is a pellet
 
-    grid: [
+    layout: [
         [2,2,2,2,2,2,2,1],
         [2,1,2,1,2,2,2,1],
         [2,2,1,2,2,2,2,1],
@@ -15,6 +15,8 @@ export default Ember.Object.extend({
     ],
 
     squareSize: 40,
+
+    //teleport: true,
 
     width: Ember.computed(function() {
         return this.get('grid.firstObject.length');
@@ -46,11 +48,12 @@ export default Ember.Object.extend({
     },
 
     restart() {
-        let grid = this.get('grid');
-        grid.forEach((row, rowIndex) => {
+        let newGrid = Ember.$.extend(true, [], this.get('layout'));
+        this.set('grid', newGrid);
+        newGrid.forEach((row, rowIndex) => {
             row.forEach((cell, columnIndex) => {
                 if(cell === 0) {
-                    grid[rowIndex][columnIndex] = 2;
+                    newGrid[rowIndex][columnIndex] = 2;
                 }
             });
         });

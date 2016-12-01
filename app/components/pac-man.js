@@ -3,12 +3,13 @@ import KeyboardShortcuts from 'ember-keyboard-shortcuts/mixins/component';
 import Pac from '../models/pac';
 import Level from '../models/level';
 import Level2 from '../models/level2';
+import Level3 from '../models/teleport-level';
 import SharedStuff from '../mixins/shared-stuff';
 import Ghost from '../models/ghost';
 
 export default Ember.Component.extend(KeyboardShortcuts, SharedStuff, {
 
-    levels: [Level, Level2],
+    levels: [Level3, Level2, Level],
 
     levelNumber: 1,
 
@@ -89,8 +90,17 @@ export default Ember.Component.extend(KeyboardShortcuts, SharedStuff, {
                 if(cell === 2) {
                     this.drawPellet(columnIndex, rowIndex);
                 }
+
+                if(cell === 3) {
+                    this.drawPowerPellet(columnIndex, rowIndex);
+                }
             });
         });
+    },
+
+    drawPowerPellet(x, y) {
+        let radiusDivisor = 4;
+        this.drawCircle(x, y, radiusDivisor, 'stopped', 'green');
     },
 
     intent: 'down',
@@ -132,17 +142,22 @@ export default Ember.Component.extend(KeyboardShortcuts, SharedStuff, {
             ghost.draw();
         });
 
-        if (this.collidedWithGhost()) {
-            this.decrementProperty('lives');
-            this.restart();
+        let ghostCollisions = this.detectGhostCollisions();
+        if (ghostCollisions.length > 0) {
+            if (this.get('pac.powerMode')) {
+                ghostCollisions.forEach( ghost => ghost.retreat() );
+            } else {
+                this.decrementProperty('lives');
+                this.restart();
+            }
         }
 
         Ember.run.later(this, this.loop, 1000/60);
     },
 
-    collidedWithGhost() {
-        return this.get('ghosts').any((ghost) => {
-            return this.get('pac.x') === ghost.get('x') && this.get('pac.y') === ghost.get('y');
+    detectGhostCollisions() {
+        return this.get('ghosts').filter((ghost) => {
+            return (this.get('pac.x') === ghost.get('x') && this.get('pac.y') === ghost.get('y'));
         });
     },
 
@@ -179,6 +194,10 @@ export default Ember.Component.extend(KeyboardShortcuts, SharedStuff, {
                 this.incrementProperty('levelNumber');
                 this.startNewLevel();
             }
+        } else if(grid[y][x] === 3) {
+            grid[y][x] = 0;
+            //this.set('pac.powerMode', true);
+            this.set('pac.powerModeTime', this.get('pac.maxPowerModeTime'));
         }
     },
 
